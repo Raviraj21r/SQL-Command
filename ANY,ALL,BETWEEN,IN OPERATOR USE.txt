@@ -1,0 +1,298 @@
+Enter password: *********
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 66
+Server version: 8.0.42 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> CREATE TABLE Products (
+    ->     ProductID INT PRIMARY KEY,
+    ->     ProductName VARCHAR(50),
+    ->     Price INT,
+    ->     Category VARCHAR(50)
+    -> );
+ERROR 1046 (3D000): No database selected
+mysql> create database Products;
+Query OK, 1 row affected (0.05 sec)
+
+mysql> use Products;
+Database changed
+mysql> CREATE TABLE Products (
+    ->     ProductID INT PRIMARY KEY,
+    ->     ProductName VARCHAR(50),
+    ->     Price INT,
+    ->     Category VARCHAR(50)
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> INSERT INTO Products (ProductID, ProductName, Price, Category) VALUES
+    -> (1, 'Pen', 10, 'Stationery'),
+    -> (2, 'Notebook', 50, 'Stationery'),
+    -> (3, 'Pencil', 5, 'Stationery'),
+    -> (4, 'Bag', 500, 'Bags');
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> select * from Products;
++-----------+-------------+-------+------------+
+| ProductID | ProductName | Price | Category   |
++-----------+-------------+-------+------------+
+|         1 | Pen         |    10 | Stationery |
+|         2 | Notebook    |    50 | Stationery |
+|         3 | Pencil      |     5 | Stationery |
+|         4 | Bag         |   500 | Bags       |
++-----------+-------------+-------+------------+
+4 rows in set (0.01 sec)
+
+mysql> SELECT ProductName, Price
+    -> FROM Products
+    -> WHERE Price > ALL (SELECT Price FROM Products WHERE Category = 'Stationery');
++-------------+-------+
+| ProductName | Price |
++-------------+-------+
+| Bag         |   500 |
++-------------+-------+
+1 row in set (0.01 sec)
+
+mysql> SELECT ProductName, Price
+    -> FROM Products
+    -> WHERE Price > ANY (SELECT Price FROM Products WHERE Category = 'Stationery');
++-------------+-------+
+| ProductName | Price |
++-------------+-------+
+| Pen         |    10 |
+| Notebook    |    50 |
+| Bag         |   500 |
++-------------+-------+
+3 rows in set (0.01 sec)
+
+mysql> drop table Products;
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> CREATE TABLE Products (
+    ->     ProductID INT PRIMARY KEY,
+    ->     ProductName VARCHAR(100),
+    ->     SupplierID INT,
+    ->     CategoryID INT,
+    ->     Price DECIMAL(10,2)
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> INSERT INTO Products (ProductID, ProductName, SupplierID, CategoryID, Price) VALUES
+    -> (1, 'Chais', 1, 1, 18),
+    -> (2, 'Chang', 1, 1, 19),
+    -> (3, 'Aniseed Syrup', 1, 2, 10),
+    -> (4, 'Chef Anton’s Cajun Seasoning', 2, 2, 22),
+    -> (5, 'Chef Anton’s Gumbo Mix', 2, 2, 21),
+    -> (6, 'Boysenberry Spread', 3, 2, 25),
+    -> (7, 'Organic Dried Pears', 3, 7, 30),
+    -> (8, 'Northwoods Cranberry Sauce', 3, 2, 40),
+    -> (9, 'Mishi Kobe Niku', 4, 6, 97);
+Query OK, 9 rows affected (0.02 sec)
+Records: 9  Duplicates: 0  Warnings: 0
+
+mysql> select * from Products;
++-----------+------------------------------+------------+------------+-------+
+| ProductID | ProductName                  | SupplierID | CategoryID | Price |
++-----------+------------------------------+------------+------------+-------+
+|         1 | Chais                        |          1 |          1 | 18.00 |
+|         2 | Chang                        |          1 |          1 | 19.00 |
+|         3 | Aniseed Syrup                |          1 |          2 | 10.00 |
+|         4 | Chef Anton?s Cajun Seasoning |          2 |          2 | 22.00 |
+|         5 | Chef Anton?s Gumbo Mix       |          2 |          2 | 21.00 |
+|         6 | Boysenberry Spread           |          3 |          2 | 25.00 |
+|         7 | Organic Dried Pears          |          3 |          7 | 30.00 |
+|         8 | Northwoods Cranberry Sauce   |          3 |          2 | 40.00 |
+|         9 | Mishi Kobe Niku              |          4 |          6 | 97.00 |
++-----------+------------------------------+------------+------------+-------+
+9 rows in set (0.01 sec)
+
+mysql> select ProductName,price
+    -> from Products
+    -> where Price > ALL(select Price FROM Products where  Price = 18.00 or Price = 40.00);
++-----------------+-------+
+| ProductName     | price |
++-----------------+-------+
+| Mishi Kobe Niku | 97.00 |
++-----------------+-------+
+1 row in set (0.01 sec)
+
+mysql> select ProductName,price
+    -> from Products
+    ->  where Price > ALL(select Price FROM Products where  Price = 10.00 or Price = 22.00);
++----------------------------+-------+
+| ProductName                | price |
++----------------------------+-------+
+| Boysenberry Spread         | 25.00 |
+| Organic Dried Pears        | 30.00 |
+| Northwoods Cranberry Sauce | 40.00 |
+| Mishi Kobe Niku            | 97.00 |
++----------------------------+-------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT ProductName, Price
+    -> FROM Products
+    -> WHERE Price > ALL (SELECT Price FROM Products WHERE CategoryID = 2);
++-----------------+-------+
+| ProductName     | Price |
++-----------------+-------+
+| Mishi Kobe Niku | 97.00 |
++-----------------+-------+
+1 row in set (0.00 sec)
+
+mysql> SELECT ProductName, Price
+    -> FROM Products
+    -> WHERE Price > ANY (SELECT Price FROM Products WHERE CategoryID = 2);
++------------------------------+-------+
+| ProductName                  | Price |
++------------------------------+-------+
+| Chais                        | 18.00 |
+| Chang                        | 19.00 |
+| Chef Anton?s Cajun Seasoning | 22.00 |
+| Chef Anton?s Gumbo Mix       | 21.00 |
+| Boysenberry Spread           | 25.00 |
+| Organic Dried Pears          | 30.00 |
+| Northwoods Cranberry Sauce   | 40.00 |
+| Mishi Kobe Niku              | 97.00 |
++------------------------------+-------+
+8 rows in set (0.00 sec)
+
+mysql> SELECT ProductName, Price
+    -> FROM Products
+    -> WHERE Price BETWEEN 20 AND 40;
++------------------------------+-------+
+| ProductName                  | Price |
++------------------------------+-------+
+| Chef Anton?s Cajun Seasoning | 22.00 |
+| Chef Anton?s Gumbo Mix       | 21.00 |
+| Boysenberry Spread           | 25.00 |
+| Organic Dried Pears          | 30.00 |
+| Northwoods Cranberry Sauce   | 40.00 |
++------------------------------+-------+
+5 rows in set (0.01 sec)
+
+mysql>  SELECT ProductName, Price
+    -> FROM Products
+    -> WHERE Price BETWEEN 20>= and <=40;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '>= and <=40' at line 3
+mysql>  SELECT ProductName, Price
+    -> FROM Products
+    ->  WHERE Price BETWEEN Price >= 20 AND Price <= 40;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '>= 20 AND Price <= 40' at line 3
+mysql> SELECT ProductName, Price
+    -> FROM Products
+    -> WHERE Price >= 20 AND Price <= 40;
++------------------------------+-------+
+| ProductName                  | Price |
++------------------------------+-------+
+| Chef Anton?s Cajun Seasoning | 22.00 |
+| Chef Anton?s Gumbo Mix       | 21.00 |
+| Boysenberry Spread           | 25.00 |
+| Organic Dried Pears          | 30.00 |
+| Northwoods Cranberry Sauce   | 40.00 |
++------------------------------+-------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT ProductID, ProductName,  Price
+    -> FROM Products
+    ->  WHERE Price >= 20 AND Price <= 40;
++-----------+------------------------------+-------+
+| ProductID | ProductName                  | Price |
++-----------+------------------------------+-------+
+|         4 | Chef Anton?s Cajun Seasoning | 22.00 |
+|         5 | Chef Anton?s Gumbo Mix       | 21.00 |
+|         6 | Boysenberry Spread           | 25.00 |
+|         7 | Organic Dried Pears          | 30.00 |
+|         8 | Northwoods Cranberry Sauce   | 40.00 |
++-----------+------------------------------+-------+
+5 rows in set (0.00 sec)
+
+mysql>  SELECT ProductID, ProductName
+    ->  FROM Products
+    ->  WHERE Price >= 20 AND Price <= 40;
++-----------+------------------------------+
+| ProductID | ProductName                  |
++-----------+------------------------------+
+|         4 | Chef Anton?s Cajun Seasoning |
+|         5 | Chef Anton?s Gumbo Mix       |
+|         6 | Boysenberry Spread           |
+|         7 | Organic Dried Pears          |
+|         8 | Northwoods Cranberry Sauce   |
++-----------+------------------------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT ProductName, SupplierID
+    -> FROM Products
+    -> WHERE SupplierID IN (1, 3);
++----------------------------+------------+
+| ProductName                | SupplierID |
++----------------------------+------------+
+| Chais                      |          1 |
+| Chang                      |          1 |
+| Aniseed Syrup              |          1 |
+| Boysenberry Spread         |          3 |
+| Organic Dried Pears        |          3 |
+| Northwoods Cranberry Sauce |          3 |
++----------------------------+------------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT ProductName, Price
+    -> FROM Products
+    -> WHERE EXISTS (
+    ->     SELECT *
+    ->     FROM Products
+    ->     WHERE SupplierID = 3
+    -> );
++------------------------------+-------+
+| ProductName                  | Price |
++------------------------------+-------+
+| Chais                        | 18.00 |
+| Chang                        | 19.00 |
+| Aniseed Syrup                | 10.00 |
+| Chef Anton?s Cajun Seasoning | 22.00 |
+| Chef Anton?s Gumbo Mix       | 21.00 |
+| Boysenberry Spread           | 25.00 |
+| Organic Dried Pears          | 30.00 |
+| Northwoods Cranberry Sauce   | 40.00 |
+| Mishi Kobe Niku              | 97.00 |
++------------------------------+-------+
+9 rows in set (0.01 sec)
+
+mysql> SELECT ProductName, Price
+    -> FROM Products
+    -> WHERE EXISTS (
+    ->     SELECT *
+    ->     FROM Products
+    ->     WHERE SupplierID = 3
+    -> );
++------------------------------+-------+
+| ProductName                  | Price |
++------------------------------+-------+
+| Chais                        | 18.00 |
+| Chang                        | 19.00 |
+| Aniseed Syrup                | 10.00 |
+| Chef Anton?s Cajun Seasoning | 22.00 |
+| Chef Anton?s Gumbo Mix       | 21.00 |
+| Boysenberry Spread           | 25.00 |
+| Organic Dried Pears          | 30.00 |
+| Northwoods Cranberry Sauce   | 40.00 |
+| Mishi Kobe Niku              | 97.00 |
++------------------------------+-------+
+9 rows in set (0.00 sec)
+
+mysql> SELECT ProductName, Price
+    -> FROM Products
+    -> WHERE EXISTS (
+    ->     SELECT *
+    ->     FROM Products
+    -> WHERE SupplierID = 8
+    -> );
+Empty set (0.00 sec)
+
+mysql>
