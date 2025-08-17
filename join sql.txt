@@ -1,0 +1,250 @@
+Enter password: *********
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 26
+Server version: 8.0.42 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database Student;
+Query OK, 1 row affected (0.02 sec)
+
+mysql> use Student;
+Database changed
+mysql> create table
+    ->
+    -> Student (
+    ->     Roll INT PRIMARY KEY,
+    ->     Name VARCHAR(50),
+    ->     City VARCHAR(50)
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> INSERT INTO Student (Roll, Name, City) VALUES
+    -> (1, 'Ravi', 'Delhi'),
+    -> (2, 'Priya', 'Mumbai'),
+    -> (3, 'Aman', 'Delhi'),
+    -> (4, 'Neha', 'Pune');
+Query OK, 4 rows affected (0.02 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> CREATE TABLE Teacher (
+    ->     TID INT PRIMARY KEY,
+    ->     Subject VARCHAR(50),
+    ->     Roll INT
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> INSERT INTO Teacher (TID, Subject, Roll) VALUES
+    -> (101, 'Math', 1),
+    -> (102, 'Science', 2),
+    -> (103, 'English', 5);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Student;
++------+-------+--------+
+| Roll | Name  | City   |
++------+-------+--------+
+|    1 | Ravi  | Delhi  |
+|    2 | Priya | Mumbai |
+|    3 | Aman  | Delhi  |
+|    4 | Neha  | Pune   |
++------+-------+--------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Teacher;
++-----+---------+------+
+| TID | Subject | Roll |
++-----+---------+------+
+| 101 | Math    |    1 |
+| 102 | Science |    2 |
+| 103 | English |    5 |
++-----+---------+------+
+3 rows in set (0.00 sec)
+
+mysql> select * from Student
+    -> inner join Teacher
+    -> on Student.Roll = Teacher.Roll;
++------+-------+--------+-----+---------+------+
+| Roll | Name  | City   | TID | Subject | Roll |
++------+-------+--------+-----+---------+------+
+|    1 | Ravi  | Delhi  | 101 | Math    |    1 |
+|    2 | Priya | Mumbai | 102 | Science |    2 |
++------+-------+--------+-----+---------+------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT Student.Roll, Student.Name, Student.City, Teacher.Subject
+    -> FROM Student
+    -> INNER JOIN Teacher
+    -> ON Student.Roll = Teacher.Roll;
++------+-------+--------+---------+
+| Roll | Name  | City   | Subject |
++------+-------+--------+---------+
+|    1 | Ravi  | Delhi  | Math    |
+|    2 | Priya | Mumbai | Science |
++------+-------+--------+---------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT Student.Roll, Student.Name, Student.City, Teacher.Subject
+    -> FROM Student
+    -> LEFT JOIN Teacher
+    -> ON Student.Roll = Teacher.Roll;
++------+-------+--------+---------+
+| Roll | Name  | City   | Subject |
++------+-------+--------+---------+
+|    1 | Ravi  | Delhi  | Math    |
+|    2 | Priya | Mumbai | Science |
+|    3 | Aman  | Delhi  | NULL    |
+|    4 | Neha  | Pune   | NULL    |
++------+-------+--------+---------+
+4 rows in set (0.00 sec)
+
+mysql> select * from Student
+    -> inner join Teacher
+    -> innerinnerinner);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 3
+mysql> select * from Student
+    -> left join Teacher
+    -> on  Student.Roll = Teacher.Roll;
++------+-------+--------+------+---------+------+
+| Roll | Name  | City   | TID  | Subject | Roll |
++------+-------+--------+------+---------+------+
+|    1 | Ravi  | Delhi  |  101 | Math    |    1 |
+|    2 | Priya | Mumbai |  102 | Science |    2 |
+|    3 | Aman  | Delhi  | NULL | NULL    | NULL |
+|    4 | Neha  | Pune   | NULL | NULL    | NULL |
++------+-------+--------+------+---------+------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT S.Name, S.City, T.Subject
+    -> FROM Student AS S
+    -> INNER JOIN Teacher AS T
+    -> ON S.Roll = T.Roll;
++-------+--------+---------+
+| Name  | City   | Subject |
++-------+--------+---------+
+| Ravi  | Delhi  | Math    |
+| Priya | Mumbai | Science |
++-------+--------+---------+
+2 rows in set (0.00 sec)
+
+mysql> select S.Roll, S.Name, S.City, T.Subject
+    -> from Student as S
+    -> right join Teacher as T
+    -> on S.Roll = T.Roll;
++------+-------+--------+---------+
+| Roll | Name  | City   | Subject |
++------+-------+--------+---------+
+|    1 | Ravi  | Delhi  | Math    |
+|    2 | Priya | Mumbai | Science |
+| NULL | NULL  | NULL   | English |
++------+-------+--------+---------+
+3 rows in set (0.00 sec)
+
+mysql> select S.Name, S.City, T.Subject
+    -> from Student as S
+    -> full outer join Teacher as T
+    -> on S.Roll = T.Roll;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'full outer join Teacher as T
+on S.Roll = T.Roll' at line 3
+mysql> SELECT S.Roll, S.Name, S.City, T.Subject
+    -> FROM Student AS S
+    -> FULL OUTER JOIN Teacher AS T
+    -> ON S.Roll = T.Roll;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'FULL OUTER JOIN Teacher AS T
+ON S.Roll = T.Roll' at line 3
+mysql> SELECT S.Roll, S.Name, S.City, T.Subject
+    -> FROM Student AS S
+    -> LEFT JOIN Teacher AS T
+    -> ON S.Roll = T.Roll
+    -> union
+    -> select S.Roll, S.Name, S.City, T.Subject
+    -> FROM Student AS S
+    -> RIGHT JOIN Teacher AS T
+    -> ON S.Roll = T.Roll;
++------+-------+--------+---------+
+| Roll | Name  | City   | Subject |
++------+-------+--------+---------+
+|    1 | Ravi  | Delhi  | Math    |
+|    2 | Priya | Mumbai | Science |
+|    3 | Aman  | Delhi  | NULL    |
+|    4 | Neha  | Pune   | NULL    |
+| NULL | NULL  | NULL   | English |
++------+-------+--------+---------+
+5 rows in set (0.01 sec)
+
+mysql> select * from Student
+    -> left join Teacher
+    -> on Student.Roll = Teacher.Roll
+    -> union
+    -> select * from Student
+    -> right join Teacher
+    -> on Student.Roll = Teacher.Roll;
++------+-------+--------+------+---------+------+
+| Roll | Name  | City   | TID  | Subject | Roll |
++------+-------+--------+------+---------+------+
+|    1 | Ravi  | Delhi  |  101 | Math    |    1 |
+|    2 | Priya | Mumbai |  102 | Science |    2 |
+|    3 | Aman  | Delhi  | NULL | NULL    | NULL |
+|    4 | Neha  | Pune   | NULL | NULL    | NULL |
+| NULL | NULL  | NULL   |  103 | English |    5 |
++------+-------+--------+------+---------+------+
+5 rows in set (0.00 sec)
+
+mysql> select * from Student
+    -> right join Teacher
+    -> on Student.Roll= Teacher.Roll
+    -> Where Student.Roll is NULL;
++------+------+------+-----+---------+------+
+| Roll | Name | City | TID | Subject | Roll |
++------+------+------+-----+---------+------+
+| NULL | NULL | NULL | 103 | English |    5 |
++------+------+------+-----+---------+------+
+1 row in set (0.07 sec)
+
+mysql> select * from Student;
++------+-------+--------+
+| Roll | Name  | City   |
++------+-------+--------+
+|    1 | Ravi  | Delhi  |
+|    2 | Priya | Mumbai |
+|    3 | Aman  | Delhi  |
+|    4 | Neha  | Pune   |
++------+-------+--------+
+4 rows in set (0.00 sec)
+
+mysql> select * from Teacher;
++-----+---------+------+
+| TID | Subject | Roll |
++-----+---------+------+
+| 101 | Math    |    1 |
+| 102 | Science |    2 |
+| 103 | English |    5 |
++-----+---------+------+
+3 rows in set (0.00 sec)
+
+mysql> Select * from Student
+    -> left join Teacher
+    -> on Student.Roll = Teacher.Roll
+    -> where Teacher.Roll is NULL;
++------+------+-------+------+---------+------+
+| Roll | Name | City  | TID  | Subject | Roll |
++------+------+-------+------+---------+------+
+|    3 | Aman | Delhi | NULL | NULL    | NULL |
+|    4 | Neha | Pune  | NULL | NULL    | NULL |
++------+------+-------+------+---------+------+
+2 rows in set (0.00 sec)
+
+mysql> Select * from Student
+    -> left join Teacher
+    ->  on Student.Roll = Teacher.Roll
+    -> where Student.Roll is NULL;
+Empty set (0.00 sec)
+
+mysql>
